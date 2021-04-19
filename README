@@ -1,0 +1,20 @@
+
+Thu 28 Jan 2021 03:26:53 PM EST
+
+I'm breaking this out into it's own folder
+
+data is from:
+https://lair.nypl.org/-/departments/library-sites-and-services/research-libraries/scan-and-deliver-staff-resources
+
+Wed 03 Mar 2021 03:41:19 PM EST
+
+I just added some code for the analysis of language and subject breakdowns
+This was for the arcadia grant but might be useful for the dashboard, as well
+
+Mon 19 Apr 2021 02:53:35 PM EDT
+
+Re-working to use libbib now (no more sysdata.rda)
+
+Mon 19 Apr 2021 03:38:31 PM EDT
+
+Great. This is nice
