@@ -18,3 +18,9 @@ Re-working to use libbib now (no more sysdata.rda)
 Mon 19 Apr 2021 03:38:31 PM EDT
 
 Great. This is nice
+
+Sat 08 May 2021 11:47:01 AM EDT
+
+Now using the `fread/fwrite_plus_date` paradigm
+
+And renamed target data files from "edd" to "scan-and-deliver"

@@ -27,10 +27,10 @@ library(ggplot2)
 
 # ------------------------------ #
 
-UPDATEDATE <- "2021-04-19"
 
+dat <- fread_plus_date("./data/lair-scan-and-deliver.dat")
+set_lb_attribute(dat, "source", "https://docs.google.com/spreadsheets/d/13zzPYWSM4YTeBfApgVdgdpEZWaIdk_Bu2io5JQqS0KY/edit#gid=0")
 
-dat <- fread(sprintf("./data/lair-edd-data-%s.dat", UPDATEDATE))
 
 NAMESTHATSHOULDBEINIT <- c("Transaction ID", "Application",
                            "Transaction Type", "Transaction Date",
@@ -84,7 +84,8 @@ ggplot(tmp2, aes(x=xdate, y=total, group=center, color=center, fill=center)) +
   ggtitle("scan and deliver filled requests (sierra metrics)") +
   xlab("date") + ylab("number of filled requests")
 
-tmp2 %>% fwrite(sprintf("./target/edd-daily-%s.dat", UPDATEDATE))
+cp_lb_attributes(dat, tmp2)
+tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-daily.dat")
 
 
 # --------------------------------------------------------------- #
@@ -130,14 +131,12 @@ ggplot(tmp2, aes(x=theweek, y=total, group=center, color=center, fill=center)) +
 
 dat[order(theweek, xdate), .(theweek, xdate)][!duplicated(theweek)] -> weeknumxwalk
 
-dat
-
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-tmp2 <- tmp2[theweek<69]
-weeknumxwalk <- weeknumxwalk[theweek<69]
+tmp2 <- tmp2[theweek<71]
+weeknumxwalk <- weeknumxwalk[theweek<71]
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
 ### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
@@ -151,17 +150,18 @@ weeknumxwalk[, .N]
 tmp2[,.N]
 tmp2[weeknumxwalk] -> tmp2
 
-
-tmp2 %>% fwrite(sprintf("./target/edd-weekly-%s.dat", UPDATEDATE))
+cp_lb_attributes(dat, tmp2)
+tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-weekly.dat")
 
 
 #######################################################
 #######################################################
 #######################################################
 
-# subject analysis for arcadia grant
+# language/subject analysis for arcadia grant
 
-big <- readRDS("../nypl-shadow-export/target/sierra-research-healed-joined-2021-04-08.datatable")
+big <- fread_plus_date("../nypl-shadow-export/target/sierra-research-healed-joined.dat.gz")
+big[,itemid:=as.character(itemid)]
 
 small <- dat[, .(itemid=str_replace(itemid, "^i", ""))]
 
@@ -180,15 +180,13 @@ together
 together %>% dt_percent_not_na("bibid")
 # 100%
 
-# together <- together[!is.na(bibid),]
-
 # language
 together %>% dt_percent_not_na("lang")
 # 100%
 
-together %>%
-  dt_counts_and_percents("lang") %>%
-  fwrite(sprintf("./target/edd-language-breakdown-%s.dat", UPDATEDATE))
+together %>% dt_counts_and_percents("lang") -> lang
+cp_lb_attributes(dat, lang)
+lang %>% fwrite_plus_date("./target/scan-and-deliver-language-breakdown.dat")
 
 
 
@@ -200,14 +198,14 @@ together[, subject_classification:=get_lc_call_subject_classification(lccall)]
 together[, subject_subclassification:=get_lc_call_subject_classification(lccall,
                                                                          subclassification=TRUE)]
 
-together %>%
-  dt_counts_and_percents("subject_classification") %>%
-  fwrite(sprintf("./target/edd-subject-classification-breakdown-%s.dat", UPDATEDATE),
-         na="NA")
+together %>% dt_counts_and_percents("subject_classification") -> lc1
+cp_lb_attributes(dat, lc1)
+lc1 %>% fwrite_plus_date("./target/scan-and-deliver-subject-classification-breakdown.dat",
+                         na="NA")
 
-together %>%
-  dt_counts_and_percents("subject_subclassification") %>%
-  fwrite(sprintf("./target/edd-subject-subclassification-breakdown-%s.dat", UPDATEDATE),
-         na="NA")
+together %>% dt_counts_and_percents("subject_subclassification") -> lc2
+cp_lb_attributes(dat, lc2)
+lc2 %>% fwrite_plus_date("./target/scan-and-deliver-subject-subclassification-breakdown.dat",
+                         na="NA")
 
 
