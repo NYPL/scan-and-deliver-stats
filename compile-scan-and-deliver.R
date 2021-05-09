@@ -19,7 +19,7 @@ library(colorout)
 library(data.table)
 library(magrittr)
 library(stringr)
-library(libbib)
+library(libbib)   # v >= 1.6.2
 library(assertr)
 
 library(lubridate)
@@ -28,6 +28,11 @@ library(ggplot2)
 # ------------------------------ #
 
 PLOTS_P <- FALSE
+
+
+####################
+## DAILY ###########
+####################
 
 
 dat <- fread_plus_date("./data/lair-scan-and-deliver.dat")
@@ -55,7 +60,7 @@ dat[, from_where:=fcase(stat_code==850, "SASB",
                         stat_code==851, "LPA",
                         stat_code==852, "Schomburg")]
 
-dat[, xdate:=mdy(str_replace(transaction_date, "(2020|2021).+$", "\\1"))]
+dat[, xdate:=mdy(str_replace(transaction_date, "(202\\d).+$", "\\1"))]
 
 dat <- dat[transaction_type=="Filled Request"]
 # dat <- dat[transaction_type=="Checkout"]
@@ -93,17 +98,18 @@ tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-daily.dat")
 
 
 # --------------------------------------------------------------- #
+# --------------------------------------------------------------- #
 
-
-# now at the week level
+####################
+## WEEKLY ##########
+####################
 
 dat <- copy(reuse)
 
-dat[order(xdate), .(theweek=week(xdate), xdate)][!duplicated(theweek)] -> wxwalk
 dat[, theweek:=week(xdate)]
 
-#!!!!!!! THIS IS AN UNFORGIVABLE KLUDGE
-dat[year(xdate)==2021, theweek:=theweek+53]
+# this is... _a_ solution
+dat[, theweek:=theweek+(53*(year(xdate)-2020))]
 
 
 dat[, .N, theweek] -> tmp
@@ -133,18 +139,14 @@ if(PLOTS_P){
 }
 
 
-dat[order(theweek, xdate), .(theweek, xdate)][!duplicated(theweek)] -> weeknumxwalk
+dat[order(theweek, xdate), .(theweek, olddate=xdate)][
+      !duplicated(theweek)][,
+      .(theweek, xdate=min(olddate)+((theweek-37)*7))] -> weeknumxwalk
 
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-tmp2 <- tmp2[theweek<71]
-weeknumxwalk <- weeknumxwalk[theweek<71]
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
-### EDIT THIS EVERYTIME IT IS REFRESHED!!!! ###
+
+### Eliding most recent week
+tmp2 <- tmp2[theweek<max(theweek)]
+weeknumxwalk <- weeknumxwalk[theweek<max(theweek)]
 
 
 setkey(weeknumxwalk, "theweek")
@@ -158,11 +160,13 @@ cp_lb_attributes(dat, tmp2)
 tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-weekly.dat")
 
 
-#######################################################
-#######################################################
-#######################################################
+# --------------------------------------------------------------- #
+# --------------------------------------------------------------- #
 
-# language/subject analysis for arcadia grant
+###########################################
+## LANGUAGE / SUBJECT BREAKDOWNS  #########
+###########################################
+
 
 big <- fread_plus_date("../nypl-shadow-export/target/sierra-research-healed-joined.dat.gz")
 big[,itemid:=as.character(itemid)]
@@ -174,10 +178,8 @@ small %>% verify(nchar(itemid)==8, success_fun=success_report)
 setkey(big, "itemid")
 setkey(small, "itemid")
 
-big[,.N]
-small[,.N]
-
-together <- big[small, nomatch=NULL][, .(bibid, itemid, lang, pub_year, lccall, title, author)]
+together <- big[small, nomatch=NULL][, .(bibid, itemid, lang,
+                                         pub_year, lccall, title, author)]
 
 together
 
