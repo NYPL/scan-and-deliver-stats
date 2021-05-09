@@ -30,6 +30,10 @@ The link to the google spreadsheet that contains the raw data
 can [be found here.]( https://lair.nypl.org/-/departments/library-sites-and-services/research-libraries/scan-and-deliver-staff-resources)
 Use the link labeled "Sierra EDD Metrics Report".
 Export that as a TSV and place it in the `data` folder.
+Make sure you name this file
+`lair-scan-and-deliver-yyyy-mm-dd.dat` where `yyyy-mm-dd` is the
+ISO 8601 date of the export.
+
 
 The second is the compiled research dataset.
 The project that generates this data
