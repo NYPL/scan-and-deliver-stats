@@ -27,6 +27,8 @@ library(ggplot2)
 
 # ------------------------------ #
 
+PLOTS_P <- FALSE
+
 
 dat <- fread_plus_date("./data/lair-scan-and-deliver.dat")
 set_lb_attribute(dat, "source", "https://docs.google.com/spreadsheets/d/13zzPYWSM4YTeBfApgVdgdpEZWaIdk_Bu2io5JQqS0KY/edit#gid=0")
@@ -77,12 +79,14 @@ tmp %>% dcast(xdate~center, value.var='N', fill=0) -> tmp3
 
 tmp2 %>% melt(id="xdate", variable.name="center", value.name="total") -> tmp2
 
-options(warn=1)
-ggplot(tmp2, aes(x=xdate, y=total, group=center, color=center, fill=center)) +
-  geom_line(size=1.5) +
-  ylim(c(0, 40)) +
-  ggtitle("scan and deliver filled requests (sierra metrics)") +
-  xlab("date") + ylab("number of filled requests")
+if(PLOTS_P){
+  options(warn=1)
+  ggplot(tmp2, aes(x=xdate, y=total, group=center, color=center, fill=center)) +
+    geom_line(size=1.5) +
+    ylim(c(0, 40)) +
+    ggtitle("scan and deliver filled requests (sierra metrics)") +
+    xlab("date") + ylab("number of filled requests")
+}
 
 cp_lb_attributes(dat, tmp2)
 tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-daily.dat")
@@ -119,14 +123,14 @@ tmp %>% dcast(theweek~center, value.var='N', fill=0) -> tmp3
 
 tmp2 %>% melt(id="theweek", variable.name="center", value.name="total") -> tmp2
 
-
-options(warn=1)
-ggplot(tmp2, aes(x=theweek, y=total, group=center, color=center, fill=center)) +
-  geom_line(size=1.5) +
-  # ylim(c(0, 40)) +
-  ggtitle("scan and deliver filled requests (sierra metrics)") +
-  xlab("week") + ylab("number of filled requests")
-
+if(PLOTS_P){
+  options(warn=1)
+  ggplot(tmp2, aes(x=theweek, y=total, group=center, color=center, fill=center)) +
+    geom_line(size=1.5) +
+    # ylim(c(0, 40)) +
+    ggtitle("scan and deliver filled requests (sierra metrics)") +
+    xlab("week") + ylab("number of filled requests")
+}
 
 
 dat[order(theweek, xdate), .(theweek, xdate)][!duplicated(theweek)] -> weeknumxwalk
