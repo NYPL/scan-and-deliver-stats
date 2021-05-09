@@ -27,12 +27,13 @@ There are two data dependencies:
 
 The first is the raw Scan and Deliver data.
 The link to the google spreadsheet that contains the raw data
-can [be found here]( https://lair.nypl.org/-/departments/library-sites-and-services/research-libraries/scan-and-deliver-staff-resources)
+can [be found here.]( https://lair.nypl.org/-/departments/library-sites-and-services/research-libraries/scan-and-deliver-staff-resources)
+Use the link labeled "Sierra EDD Metrics Report".
 Export that as a TSV and place it in the `data` folder.
 
 The second is the compiled research dataset.
 The project that generates this data
-[can be found here](https://github.com/NYPL/sierra-shadow-dataset)
+[can be found here.](https://github.com/NYPL/sierra-shadow-dataset)
 The compiled file can be accessd on google drive. Just ask for a link!
 
 Make sure you modify the global variable `SHADOW_DATA_LOCATION` in
