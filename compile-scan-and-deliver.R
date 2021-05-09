@@ -27,7 +27,9 @@ library(ggplot2)
 
 # ------------------------------ #
 
+
 PLOTS_P <- FALSE
+SHADOW_DATA_LOCATION <- "~/Dropbox/NYPL/nypl-shadow-export/target/"
 
 
 ####################
@@ -95,7 +97,6 @@ if(PLOTS_P){
 
 cp_lb_attributes(dat, tmp2)
 tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-daily.dat")
-
 
 # --------------------------------------------------------------- #
 # --------------------------------------------------------------- #
@@ -168,7 +169,8 @@ tmp2 %>% fwrite_plus_date("./target/scan-and-deliver-weekly.dat")
 ###########################################
 
 
-big <- fread_plus_date("../nypl-shadow-export/target/sierra-research-healed-joined.dat.gz")
+big <- fread_plus_date(sprintf("%s/sierra-research-healed-joined.dat.gz",
+                               SHADOW_DATA_LOCATION))
 big[,itemid:=as.character(itemid)]
 
 small <- dat[, .(itemid=str_replace(itemid, "^i", ""))]
