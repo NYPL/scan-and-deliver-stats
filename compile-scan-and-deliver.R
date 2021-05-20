@@ -5,7 +5,7 @@
 rm(list=ls())
 
 options(echo=TRUE)
-options(width = 80)
+options(width=80)
 options(warn=2)
 options(scipen=10)
 options(datatable.prettyprint.char=50)
@@ -21,9 +21,6 @@ library(magrittr)
 library(stringr)
 library(libbib)   # v >= 1.6.2
 library(assertr)
-
-library(lubridate)
-library(ggplot2)
 
 # ------------------------------ #
 
@@ -62,7 +59,8 @@ dat[, from_where:=fcase(stat_code==850, "SASB",
                         stat_code==851, "LPA",
                         stat_code==852, "Schomburg")]
 
-dat[, xdate:=mdy(str_replace(transaction_date, "(202\\d).+$", "\\1"))]
+dat[, xdate:=as.Date(str_replace(transaction_date, "(202\\d).+$", "\\1"),
+                     format="%m/%d/%Y")]
 
 dat <- dat[transaction_type=="Filled Request"]
 # dat <- dat[transaction_type=="Checkout"]
@@ -87,6 +85,7 @@ tmp %>% dcast(xdate~center, value.var='N', fill=0) -> tmp3
 tmp2 %>% melt(id="xdate", variable.name="center", value.name="total") -> tmp2
 
 if(PLOTS_P){
+  library(ggplot2)
   options(warn=1)
   ggplot(tmp2, aes(x=xdate, y=total, group=center, color=center, fill=center)) +
     geom_line(size=1.5) +

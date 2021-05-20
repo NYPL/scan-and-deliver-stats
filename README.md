@@ -31,7 +31,7 @@ can [be found here.]( https://lair.nypl.org/-/departments/library-sites-and-serv
 Use the link labeled "Sierra EDD Metrics Report".
 Export that as a TSV and place it in the `data` folder.
 Make sure you name this file
-`lair-scan-and-deliver-yyyy-mm-dd.dat` where `yyyy-mm-dd` is the
+`lair-scan-and-deliver-yYYY-MM-DD.dat` where `YYYY-MM-DD` is the
 ISO 8601 date of the export.
 
 
@@ -43,8 +43,8 @@ The compiled file can be accessd on google drive. Just ask for a link!
 Make sure you modify the global variable `SHADOW_DATA_LOCATION` in
 `compile-scan-and-deliver.R` to the directory that contains the
 research data set. The filename of the data set should be
-something like `sierra-research-healed-joined-yyyy-mm-dd.dat.gz`
-where `yyyy-mm-dd` is an ISO 8601 date.
+something like `sierra-research-healed-joined-YYYY-MM-DD.dat.gz`
+where `YYYY-MM-DD` is an ISO 8601 date.
 
 ### how to run it
 
