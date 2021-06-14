@@ -207,12 +207,10 @@ together[, subject_subclassification:=get_lc_call_subject_classification(lccall,
 
 together %>% dt_counts_and_percents("subject_classification") -> lc1
 cp_lb_attributes(dat, lc1)
-lc1 %>% fwrite_plus_date("./target/scan-and-deliver-subject-classification-breakdown.dat",
-                         na="NA")
+lc1 %>% fwrite_plus_date("./target/scan-and-deliver-subject-classification-breakdown.dat")
 
 together %>% dt_counts_and_percents("subject_subclassification") -> lc2
 cp_lb_attributes(dat, lc2)
-lc2 %>% fwrite_plus_date("./target/scan-and-deliver-subject-subclassification-breakdown.dat",
-                         na="NA")
+lc2 %>% fwrite_plus_date("./target/scan-and-deliver-subject-subclassification-breakdown.dat")
 
 
